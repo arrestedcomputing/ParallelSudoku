@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_parallelsudoku" default="compile.module.parallelsudoku">
+  <dirname property="module.parallelsudoku.basedir" file="${ant.file.module_parallelsudoku}"/>
+  
+  <property name="module.jdk.home.parallelsudoku" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.parallelsudoku" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.parallelsudoku" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.parallelsudoku" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="parallelsudoku.output.dir" value="${module.parallelsudoku.basedir}/out/production/ParallelSudoku"/>
+  <property name="parallelsudoku.testoutput.dir" value="${module.parallelsudoku.basedir}/out/test/ParallelSudoku"/>
+  
+  <path id="parallelsudoku.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="parallelsudoku.module.production.classpath">
+    <path refid="${module.jdk.classpath.parallelsudoku}"/>
+    <path refid="library.com.google.guava:guava:27.0.1-jre.classpath"/>
+  </path>
+  
+  <path id="parallelsudoku.runtime.production.module.classpath">
+    <pathelement location="${parallelsudoku.output.dir}"/>
+    <path refid="library.com.google.guava:guava:27.0.1-jre.classpath"/>
+  </path>
+  
+  <path id="parallelsudoku.module.classpath">
+    <path refid="${module.jdk.classpath.parallelsudoku}"/>
+    <pathelement location="${parallelsudoku.output.dir}"/>
+    <path refid="library.com.google.guava:guava:27.0.1-jre.classpath"/>
+  </path>
+  
+  <path id="parallelsudoku.runtime.module.classpath">
+    <pathelement location="${parallelsudoku.testoutput.dir}"/>
+    <pathelement location="${parallelsudoku.output.dir}"/>
+    <path refid="library.com.google.guava:guava:27.0.1-jre.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.parallelsudoku">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.parallelsudoku">
+    <patternset refid="excluded.from.module.parallelsudoku"/>
+  </patternset>
+  
+  <path id="parallelsudoku.module.sourcepath">
+    <dirset dir="${module.parallelsudoku.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.parallelsudoku" depends="compile.module.parallelsudoku.production,compile.module.parallelsudoku.tests" description="Compile module ParallelSudoku"/>
+  
+  <target name="compile.module.parallelsudoku.production" depends="register.custom.compilers" description="Compile module ParallelSudoku; production classes">
+    <mkdir dir="${parallelsudoku.output.dir}"/>
+    <javac2 destdir="${parallelsudoku.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.parallelsudoku}/javac">
+      <compilerarg line="${compiler.args.parallelsudoku}"/>
+      <bootclasspath refid="parallelsudoku.module.bootclasspath"/>
+      <classpath refid="parallelsudoku.module.production.classpath"/>
+      <src refid="parallelsudoku.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.parallelsudoku"/>
+    </javac2>
+    
+    <copy todir="${parallelsudoku.output.dir}">
+      <fileset dir="${module.parallelsudoku.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.parallelsudoku.tests" depends="register.custom.compilers,compile.module.parallelsudoku.production" description="compile module ParallelSudoku; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.parallelsudoku" description="cleanup module">
+    <delete dir="${parallelsudoku.output.dir}"/>
+    <delete dir="${parallelsudoku.testoutput.dir}"/>
+  </target>
+</project>
